@@ -55,10 +55,17 @@
                 <b-row v-if="data.item.contactInfos.length > 0" class="mb-2"
                        v-for="contactInfo in data.item.contactInfos">
                   <b-col sm="3" class="text-sm-right">
-                    <font-awesome-icon :icon="iconNameFor(contactInfo)"/>
                     <b>{{labelFor(contactInfo)}}</b>
+                    <font-awesome-icon :icon="iconFor(contactInfo)"/>
                   </b-col>
-                  <b-col>{{ contactInfo.data }}</b-col>
+                  <b-col v-if="linkPrefixes[contactInfo.type] != null">
+                    <a :href="linkPrefixes[contactInfo.type] + contactInfo.data">
+                      {{ contactInfo.data }}
+                    </a>
+                  </b-col>
+                  <b-col v-else>
+                    {{ contactInfo.data }}
+                  </b-col>
                 </b-row>
                 <b-row v-if="data.item.contactInfos.length === 0" class="mb-2">
                   <b-col sm="3" class="text-sm-right"><b>No contact info.</b></b-col>
@@ -91,6 +98,14 @@
 </template>
 
 <script>
+  import {
+    faStackOverflow,
+    faFacebook,
+    faTwitter,
+    faBitbucket,
+    faGithub
+  } from '@fortawesome/free-brands-svg-icons'
+
   export default {
     name: "Persons",
     data() {
@@ -105,13 +120,50 @@
             key: 'name',
             sortable: true
           },
-          'birthDate',
+          {
+            key: 'birthDate',
+            sortable: true
+          },
           'actions'
         ],
         toDelete: {
           givenName: '',
           familyName: '',
           id: ''
+        },
+        labels: {
+          "MOBILE": "Mobile",
+          "HOME": "Home",
+          "WORK": "Work",
+          "FAX": "Fax",
+          "TWITTER": "Twitter",
+          "FACEBOOK": "Facebook",
+          "STACKOVERFLOW": "StackOverflow",
+          "GITHUB": "GitHub",
+          "BITBUCKET": "Bitbucket"
+        },
+        icons: {
+          "MOBILE": "mobile",
+          "HOME": "phone",
+          "WORK": "phone",
+          "FAX": "fax",
+          "TWITTER": faTwitter,
+          "FACEBOOK": faFacebook,
+          "STACKOVERFLOW": faStackOverflow,
+          "GITHUB": faGithub,
+          "BITBUCKET": faBitbucket,
+          "CUSTOM": "tag"
+        },
+        linkPrefixes: {
+          "MOBILE": "tel:+1",
+          "HOME": "tel:+1",
+          "WORK": "tel:+1",
+          "FAX": "tel:+1",
+          "FACEBOOK": "https://facebook.com/",
+          "TWITTER": "https://twitter.com/",
+          "GITHUB": "https://github.com/",
+          "BITBUCKET": "https://bitbucket.org/",
+          "STACKOVERFLOW": "https://stackoverflow.com/cv/"
         },
         apiData: {
           _embedded: {
@@ -144,50 +196,27 @@
         })
       },
       labelFor(contactInfo) {
-        switch (contactInfo.type) {
-          case "":
-          case "CUSTOM":
-            return contactInfo.customLabel
-          case "STACKOVERFLOW":
-            return "StackOverflow"
-          case "GITHUB":
-            return "GitHub"
-          case "MOBILE":
-          case "HOME":
-          case "WORK":
-          case "FAX":
-          case "TWITTER":
-          case "FACEBOOK":
-          case "BITBUCKET":
-          default:
-            return contactInfo.type.substr(0, 1) + contactInfo.type.substr(1).toLowerCase()
+        if (contactInfo.type == null || contactInfo.type.length === 0) {
+          return "Unknown"
         }
+        let label = this.labels[contactInfo.type]
+        if (label == null) {
+          label = contactInfo.customLabel
+        }
+        if (label == null) {
+          label = contactInfo.type.substr(0, 1) + contactInfo.type.substr(1).toLowerCase()
+        }
+        return label
       },
-      iconNameFor(contactInfo) {
-        switch (contactInfo.type) {
-          case "":
-          case "CUSTOM":
-            return "tag"
-          case "STACKOVERFLOW":
-            return "stack-overflow"
-          case "GITHUB":
-            return "github"
-          case "MOBILE":
-            return "mobile"
-          case "HOME":
-          case "WORK":
-            return "phone"
-          case "FAX":
-            return "fax"
-          case "TWITTER":
-            return "twitter"
-          case "FACEBOOK":
-            return "facebook"
-          case "BITBUCKET":
-            return "bitbucket"
-          default:
-            return contactInfo.type.substr(0, 1) + contactInfo.type.substr(1).toLowerCase()
+      iconFor(contactInfo) {
+        if (contactInfo.type == null || contactInfo.type.length === 0) {
+          return "tag"
         }
+        let icon = this.icons[contactInfo.type]
+        if (icon == null) {
+          icon = "tag"
+        }
+        return icon
       },
       fetchData(ctx, callback) {
         let page = ctx.currentPage - 1
