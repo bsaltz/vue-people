@@ -1,0 +1,133 @@
+import org.apache.tools.ant.taskdefs.condition.Os
+
+group = project.parent.group
+version = project.parent.version
+
+task install {
+  group = 'npm'
+  description = 'Installs node_modules via npm install'
+
+  inputs.file "$projectDir/package.json"
+  outputs.upToDateWhen { file("$projectDir/node_modules").exists() }
+
+  def npm = {
+    workingDir = "$projectDir"
+
+    // Node Package Manager
+    if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+      executable = 'cmd'
+      args '/c'
+      args 'npm.cmd'
+    } else {
+      executable = 'npm'
+    }
+
+    args 'install'
+  }
+
+  doLast {
+    println 'executing npm'
+    exec npm
+    println 'npm executed'
+  }
+}
+
+task update {
+  group = 'npm'
+  description = 'Updates fuzzy-versioned node_modules via npm update'
+
+  def npm = {
+    workingDir = "$projectDir"
+
+    // Node Package Manager
+    if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+      executable = 'cmd'
+      args '/c'
+      args 'npm.cmd'
+    } else {
+      executable = 'npm'
+    }
+
+    args 'update'
+  }
+
+  doLast {
+    println 'executing npm'
+    exec npm
+    println 'npm executed'
+  }
+}
+
+task clean(type: Delete) {
+  group = 'npm'
+  description = 'Deletes files created by the npm task'
+
+  delete file("$projectDir/dist")
+}
+
+task build {
+  group = 'npm'
+  description = 'Builds the project with npm according to the build configuration.'
+
+  inputs.dir "$projectDir/build"
+  inputs.dir "$projectDir/config"
+  inputs.dir "$projectDir/src"
+  inputs.dir "$projectDir/static"
+  outputs.dir "$projectDir/dist"
+
+  def npm = {
+    workingDir = "$projectDir"
+
+    // Node Package Manager
+    if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+      executable = 'cmd'
+      args '/c'
+      args 'npm.cmd'
+    } else {
+      executable = 'npm'
+    }
+
+    args 'run-script'
+    args 'build'
+  }
+
+  doLast {
+    println 'executing npm'
+    exec npm
+    println 'npm executed'
+  }
+}
+build.dependsOn('install')
+
+
+task test {
+  group = 'npm'
+  description = 'Tests the project with the test script.'
+
+  inputs.dir "$projectDir/src"
+  inputs.dir "$projectDir/static"
+  inputs.dir "$projectDir/test"
+
+  def npm = {
+    workingDir = "$projectDir"
+
+    // Node Package Manager
+    if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+      executable = 'cmd'
+      args '/c'
+      args 'npm.cmd'
+    } else {
+      executable = 'npm'
+    }
+
+    args 'run-script'
+    args 'test'
+  }
+
+  doLast {
+    println 'executing npm'
+    exec npm
+    println 'npm executed'
+  }
+}
+test.dependsOn('install')

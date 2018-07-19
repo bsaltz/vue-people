@@ -1,0 +1,39 @@
+plugins {
+    id "org.springframework.boot" version "2.0.3.RELEASE"
+}
+plugins {
+    id "io.spring.dependency-management" version "1.0.5.RELEASE"
+}
+
+apply plugin: 'java'
+apply plugin: 'idea'
+apply plugin: 'jacoco'
+
+group = project.parent.group
+version = project.parent.version
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile('org.springframework.boot:spring-boot-starter-actuator')
+    compile('org.springframework.boot:spring-boot-starter-data-mongodb')
+    compile('org.springframework.boot:spring-boot-starter-data-rest')
+    compile('org.springframework.boot:spring-boot-starter-web')
+    runtime('org.springframework.boot:spring-boot-devtools')
+    compileOnly('org.springframework.boot:spring-boot-configuration-processor')
+    testCompile('org.springframework.boot:spring-boot-starter-test')
+    testCompile('de.flapdoodle.embed:de.flapdoodle.embed.mongo')
+}
+
+task processVueResources(type: Copy) {
+    from("${project.parent.projectDir}/vue-people-js/dist/")
+    into "${project.buildDir}/resources/main/"
+}
+processVueResources.dependsOn(project(':vue-people-js').build)
+
+processResources.dependsOn('processVueResources')
+
+clean.dependsOn(project(':vue-people-js').clean)

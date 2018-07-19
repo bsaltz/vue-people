@@ -1,0 +1,8 @@
+.gradle
+/vue-people-spring-boot/build/
+!gradle/wrapper/gradle-wrapper.jar
+
+.idea
+*.iws
+*.iml
+*.ipr
