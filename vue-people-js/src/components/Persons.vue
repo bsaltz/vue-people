@@ -3,19 +3,33 @@
     <b-container>
       <b-row>
         <b-col>
-          <h1>Vue People</h1>
-          <p>
-            Your current address book.
-          </p>
+          <h1>Address Book</h1>
         </b-col>
       </b-row>
-      <b-row>
-        <b-col sm="8">
-          <b-pagination align="center" v-model="currentPage" :per-page="perPage"
-                        :total-rows="totalRows"></b-pagination>
+      <b-row align-h="end">
+        <b-col sm="8" style="text-align: center;">
+          <b-button-group>
+            <b-btn variant="outline-primary" @click="changePageNumber(1)"
+                   :disabled="pageNumber === 1">
+              <font-awesome-icon icon="angle-double-left"/>
+            </b-btn>
+            <b-btn variant="outline-primary" @click="changePageNumber(pageNumber - 1)"
+                   :disabled="pageNumber === 1">
+              <font-awesome-icon icon="angle-left"/>
+            </b-btn>
+            <b-btn variant="link" @click="$refs.peopleTable.refresh()">{{ pageNumber }}</b-btn>
+            <b-btn variant="outline-primary" @click="changePageNumber(pageNumber + 1)"
+                   :disabled="pageNumber === apiData.page.totalPages">
+              <font-awesome-icon icon="angle-right"/>
+            </b-btn>
+            <b-btn variant="outline-primary" @click="changePageNumber(apiData.page.totalPages)"
+                   :disabled="pageNumber === apiData.page.totalPages">
+              <font-awesome-icon icon="angle-double-right"/>
+            </b-btn>
+          </b-button-group>
         </b-col>
-        <b-col>
-          <router-link class="btn btn-success" to="/persons/new">
+        <b-col sm="2">
+          <router-link class="btn btn-success float-right" to="/persons/new">
             New Person
           </router-link>
         </b-col>
@@ -26,8 +40,8 @@
         </b-col>
         <b-col>
           <div align="center">
-            Displaying {{ totalRows === 0 ? '0' : (currentPage - 1) * perPage + 1 }}
-            - {{ (currentPage * perPage < totalRows) ? currentPage * perPage : totalRows }}
+            Displaying {{ totalRows === 0 ? '0' : (pageNumber - 1) * perPage + 1 }}
+            - {{ (pageNumber * perPage < totalRows) ? pageNumber * perPage : totalRows }}
             of {{ totalRows }}
           </div>
         </b-col>
@@ -39,9 +53,9 @@
       </b-row>
       <b-row>
         <b-col>
-          <b-table hover :stacked="stacked" :items="fetchData" :fields="fields"
-                   :current-page="currentPage" :per-page="perPage"
-                   :total-rows="totalRows" sort-by="name" ref="peopleTable">
+          <b-table hover :stacked="stacked" :items="fetchData" :fields="fields" ref="peopleTable"
+                   :current-page="pageNumber" :per-page="perPage" :total-rows="totalRows"
+                   :sort-by="sortBy" :sort-desc="sortDesc" @sort-changed="sortChanged">
             <template slot="name" slot-scope="data">
               {{data.item.familyName}}, {{data.item.givenName}}
             </template>
@@ -87,9 +101,26 @@
         </b-col>
       </b-row>
       <b-row>
-        <b-col>
-          <b-pagination align="center" v-model="currentPage" :per-page="perPage"
-                        :total-rows="totalRows"></b-pagination>
+        <b-col style="text-align: center;">
+          <b-button-group>
+            <b-btn variant="outline-primary" @click="changePageNumber(1)"
+                   :disabled="pageNumber === 1">
+              <font-awesome-icon icon="angle-double-left"/>
+            </b-btn>
+            <b-btn variant="outline-primary" @click="changePageNumber(pageNumber - 1)"
+                   :disabled="pageNumber === 1">
+              <font-awesome-icon icon="angle-left"/>
+            </b-btn>
+            <b-btn variant="link" @click="$refs.peopleTable.refresh()">{{ pageNumber }}</b-btn>
+            <b-btn variant="outline-primary" @click="changePageNumber(pageNumber + 1)"
+                   :disabled="pageNumber === apiData.page.totalPages">
+              <font-awesome-icon icon="angle-right"/>
+            </b-btn>
+            <b-btn variant="outline-primary" @click="changePageNumber(apiData.page.totalPages)"
+                   :disabled="pageNumber === apiData.page.totalPages">
+              <font-awesome-icon icon="angle-double-right"/>
+            </b-btn>
+          </b-button-group>
         </b-col>
       </b-row>
     </b-container>
@@ -116,15 +147,15 @@
     faBitbucket,
     faGithub
   } from '@fortawesome/free-brands-svg-icons'
+  import {mapState} from 'vuex'
 
   export default {
     name: "Persons",
     data() {
       return {
         stacked: false,
-        currentPage: 1,
         perPage: 10,
-        pageOptions: [5, 10, 20, 50],
+        pageOptions: [5, 10, 20, 50, 100],
         totalRows: 0,
         fields: [
           {
@@ -193,6 +224,21 @@
         }
       }
     },
+    computed: mapState([
+      'pageNumber',
+      'sortBy',
+      'sortDesc'
+    ]),
+    watch: {
+      perPage: function (newPerPage, oldPerPage) {
+        let n1 = oldPerPage * 1.0
+        let n2 = newPerPage * 1.0
+        let r = n2 / n1
+        let p1 = this.pageNumber - 1
+        let p2 = p1 / r
+        this.changePageNumber(Math.trunc(p2) + 1)
+      }
+    },
     methods: {
       showDelete(person) {
         this.toDelete.givenName = person.givenName
@@ -231,6 +277,15 @@
           icon = "tag"
         }
         return icon
+      },
+      changePageNumber(newPageNumber) {
+        if (newPageNumber >= 1 && newPageNumber <= this.apiData.page.totalPages) {
+          this.$store.commit('setPageNumber', newPageNumber)
+        }
+      },
+      sortChanged(ctx) {
+        this.$store.commit('setSortBy', ctx.sortBy)
+        this.$store.commit('setSortDesc', ctx.sortDesc)
       },
       fetchData(ctx, callback) {
         let page = ctx.currentPage - 1

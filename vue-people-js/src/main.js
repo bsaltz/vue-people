@@ -31,6 +31,7 @@ import {
   faGithub
 } from '@fortawesome/free-brands-svg-icons'
 import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome'
+import store from './store'
 
 library.add(
   faAngleDoubleLeft,
@@ -63,6 +64,7 @@ Vue.component('font-awesome-icon', FontAwesomeIcon)
 new Vue({
   el: '#app',
   router,
+  store,
   components: {App},
   template: '<App/>'
 })
