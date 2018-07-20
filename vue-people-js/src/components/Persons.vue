@@ -151,7 +151,8 @@
           "FACEBOOK": "Facebook",
           "STACKOVERFLOW": "StackOverflow",
           "GITHUB": "GitHub",
-          "BITBUCKET": "Bitbucket"
+          "BITBUCKET": "Bitbucket",
+          "EMAIL": "Email"
         },
         icons: {
           "MOBILE": "mobile",
@@ -163,6 +164,7 @@
           "STACKOVERFLOW": faStackOverflow,
           "GITHUB": faGithub,
           "BITBUCKET": faBitbucket,
+          "EMAIL": "envelope",
           "CUSTOM": "tag"
         },
         linkPrefixes: {
@@ -174,7 +176,8 @@
           "TWITTER": "https://twitter.com/",
           "GITHUB": "https://github.com/",
           "BITBUCKET": "https://bitbucket.org/",
-          "STACKOVERFLOW": "https://stackoverflow.com/cv/"
+          "STACKOVERFLOW": "https://stackoverflow.com/cv/",
+          "EMAIL": "mailto:"
         },
         apiData: {
           _embedded: {

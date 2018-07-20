@@ -105,6 +105,21 @@
             </b-form-group>
           </b-col>
           <b-col sm="5"
+                 v-else-if="contactInfo.type === 'EMAIL'">
+            <b-form-group :id="'contact-info-group-' + index"
+                          :label="labelFor(contactInfo)"
+                          label-sr-only
+                          :label-for="'contact-info-input-' + index">
+              <b-input-group size="sm">
+                <b-form-input :id="'contact-info-input-' + index"
+                              type="email"
+                              v-model="contactInfo.data"
+                              required>
+                </b-form-input>
+              </b-input-group>
+            </b-form-group>
+          </b-col>
+          <b-col sm="5"
                  v-else-if="contactInfo.type === 'CUSTOM'">
             <b-form-group :id="'contact-info-group-' + index"
                           :label="labelFor(contactInfo)"
@@ -181,6 +196,10 @@
               data: ""
             },
             {
+              type: "EMAIL",
+              data: ""
+            },
+            {
               type: "FACEBOOK",
               data: ""
             },
@@ -191,6 +210,7 @@
           { value: "HOME", text: "Home"},
           { value: "WORK", text: "Work"},
           { value: "FAX", text: "Fax"},
+          { value: "EMAIL", text: "Email"},
           { value: "TWITTER", text: "Twitter"},
           { value: "FACEBOOK", text: "Facebook"},
           { value: "STACKOVERFLOW", text: "StackOverflow"},
@@ -207,7 +227,8 @@
           "FACEBOOK": "Facebook",
           "STACKOVERFLOW": "StackOverflow",
           "GITHUB": "GitHub",
-          "BITBUCKET": "Bitbucket"
+          "BITBUCKET": "Bitbucket",
+          "EMAIL": "Email"
         },
         icons: {
           "MOBILE": "mobile",
@@ -219,6 +240,7 @@
           "STACKOVERFLOW": faStackOverflow,
           "GITHUB": faGithub,
           "BITBUCKET": faBitbucket,
+          "EMAIL": "envelope",
           "CUSTOM": "tag"
         },
         domains: {

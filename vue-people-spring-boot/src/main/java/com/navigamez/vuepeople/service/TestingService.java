@@ -97,6 +97,8 @@ public class TestingService {
             case GITHUB:
             case BITBUCKET:
                 return generateUsername(person, random);
+            case EMAIL:
+                return generateUsername(person, random) + "@example.com";
             case CUSTOM:
             default:
                 if (random.nextInt() < 0.7) {

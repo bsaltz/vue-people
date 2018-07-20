@@ -20,7 +20,8 @@ import {
   faTag,
   faMobile,
   faPhone,
-  faFax
+  faFax,
+  faEnvelope
 } from '@fortawesome/free-solid-svg-icons'
 import {
   faStackOverflow,
@@ -45,6 +46,7 @@ library.add(
   faMobile,
   faPhone,
   faFax,
+  faEnvelope,
   faStackOverflow,
   faFacebook,
   faTwitter,

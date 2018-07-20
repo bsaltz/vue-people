@@ -10,5 +10,6 @@ public enum ContactInfoType {
     STACKOVERFLOW,
     GITHUB,
     BITBUCKET,
+    EMAIL,
     CUSTOM
 }
