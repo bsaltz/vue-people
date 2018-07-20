@@ -9,6 +9,17 @@
           </p>
         </b-col>
       </b-row>
+      <b-row>
+        <b-col sm="8">
+          <b-pagination align="center" v-model="currentPage" :per-page="perPage"
+                        :total-rows="totalRows"></b-pagination>
+        </b-col>
+        <b-col>
+          <router-link class="btn btn-success" to="/persons/new">
+            New Person
+          </router-link>
+        </b-col>
+      </b-row>
       <b-row align-v="center" class="my-1">
         <b-col>
           <b-form-checkbox v-model="stacked">Stacked Display</b-form-checkbox>
