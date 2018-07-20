@@ -1,6 +1,5 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import HelloWorld from '@/components/HelloWorld'
 import Persons from '@/components/Persons'
 import Person from '@/components/Person'
 
@@ -10,16 +9,11 @@ export default new Router({
   routes: [
     {
       path: '/',
-      name: 'HelloWorld',
-      component: HelloWorld
-    },
-    {
-      path: '/persons',
       name: 'Persons',
       component: Persons
     },
     {
-      path: '/persons/:id',
+      path: '/:id',
       name: 'Person',
       component: Person
     }
