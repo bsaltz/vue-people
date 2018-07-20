@@ -144,7 +144,7 @@ public class TestingService {
     }
 
     private String randomBirthDate(Random random) {
-        int daysBack = random.nextInt(90 * 365) + 20 * 365;
+        int daysBack = random.nextInt(70 * 365) + 20 * 365;
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.DATE, -daysBack);
         return SimpleDateFormatManager.get("yyyy-MM-dd").format(cal.getTime());
